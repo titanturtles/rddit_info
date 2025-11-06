@@ -1,0 +1,66 @@
+{
+  "reddit": {
+    "client_id": "",
+    "client_secret": "",
+    "user_agent": "RedditStockBot/1.0",
+    "subreddits": ["wallstreetbets", "stocks", "investing"],
+    "limit_per_request": 100,
+    "max_retries": 3,
+    "request_timeout": 30
+  },
+  "mongodb": {
+    "host": "mongodb://localhost:27017",
+    "database": "reddit_trading",
+    "collections": {
+      "posts": "reddit_posts",
+      "comments": "reddit_comments",
+      "sentiment_analysis": "sentiment_analysis",
+      "stock_prices": "stock_prices",
+      "patterns": "trading_patterns",
+      "llm_responses": "llm_responses"
+    }
+  },
+  "llm": {
+    "provider": "deepseek",
+    "api_key": "",
+    "base_url": "https://api.deepseek.com/v1",
+    "model": "deepseek-chat",
+    "temperature": 0.3,
+    "max_tokens": 500,
+    "timeout": 30
+  },
+  "stock_data": {
+    "provider": "yfinance",
+    "include_indicators": ["SMA", "RSI", "MACD", "Bollinger_Bands"],
+    "lookback_days": 365,
+    "data_frequency": "1d"
+  },
+  "data_collection": {
+    "start_date": "2023-01-01",
+    "end_date": "2025-11-05",
+    "batch_size": 50,
+    "sleep_between_requests": 2
+  },
+  "sentiment_analysis": {
+    "enable_per_message": true,
+    "aggregate_daily": true,
+    "aggregate_weekly": true,
+    "sentiment_scale": "negative, neutral, positive"
+  },
+  "pattern_analysis": {
+    "min_mentions": 5,
+    "correlation_threshold": 0.6,
+    "window_days": 7,
+    "price_change_threshold": 0.05
+  },
+  "logging": {
+    "level": "INFO",
+    "log_file": "logs/trading_bot.log",
+    "console_output": true
+  },
+  "api_keys": {
+    "stock_api_provider": "yfinance",
+    "crypto_data": false,
+    "market_data_api_key": "OPTIONAL_API_KEY"
+  }
+}
