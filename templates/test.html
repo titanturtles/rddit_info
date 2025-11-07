@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body>
+    <h1>API Test Page</h1>
+    <div id="results"></div>
+
+    <script>
+        console.log('Test page loaded');
+
+        async function testAPIs() {
+            console.log('Testing APIs...');
+            const baseURL = '/api';
+
+            try {
+                // Test 1: Dashboard stats
+                console.log('Fetching /api/dashboard/stats...');
+                let response = await fetch(`${baseURL}/dashboard/stats`);
+                let data = await response.json();
+                console.log('Dashboard stats:', data);
+                document.getElementById('results').innerHTML += `<p>Dashboard stats: ${JSON.stringify(data).substring(0, 100)}</p>`;
+
+                // Test 2: Sentiment summary
+                console.log('Fetching /api/sentiment/summary...');
+                response = await fetch(`${baseURL}/sentiment/summary`);
+                data = await response.json();
+                console.log('Sentiment summary:', data);
+                document.getElementById('results').innerHTML += `<p>Sentiment: ${JSON.stringify(data)}</p>`;
+
+                // Test 3: Top stocks
+                console.log('Fetching /api/stocks/top...');
+                response = await fetch(`${baseURL}/stocks/top?limit=3`);
+                data = await response.json();
+                console.log('Top stocks:', data);
+                document.getElementById('results').innerHTML += `<p>Top stocks returned: ${data.stocks ? data.stocks.length : 0}</p>`;
+
+                // Test 4: Health
+                console.log('Fetching /api/health...');
+                response = await fetch(`${baseURL}/health`);
+                data = await response.json();
+                console.log('Health:', data);
+                document.getElementById('results').innerHTML += `<p>Health: ${data.status}</p>`;
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML += `<p style="color:red;">Error: ${error}</p>`;
+            }
+        }
+
+        testAPIs();
+    </script>
+</body>
+</html>

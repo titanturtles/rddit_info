@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patterns - Trading Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="navbar-content">
+                <h1 class="navbar-title">
+                    <i class="fas fa-chart-line"></i> Trading Bot Dashboard
+                </h1>
+                <div class="nav-links">
+                    <a href="/" class="nav-link">Dashboard</a>
+                    <a href="/stocks" class="nav-link">Stocks</a>
+                    <a href="/patterns" class="nav-link active">Patterns</a>
+                    <a href="/llm-monitor" class="nav-link">LLM Monitor</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <!-- Info Section -->
+            <div class="info-box">
+                <h2>
+                    <i class="fas fa-wave-square"></i> Trading Pattern Analysis
+                </h2>
+                <p>
+                    This section displays detected trading patterns based on sentiment analysis and price movements.
+                    Patterns are automatically detected and ranked by confidence level.
+                </p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Total Patterns</h3>
+                        <i class="fas fa-th"></i>
+                    </div>
+                    <div class="stat-value" id="patterns-total">--</div>
+                    <div class="stat-desc">Detected patterns</div>
+                </div>
+
+                <div class="stat-card success">
+                    <div class="stat-header">
+                        <h3>High Confidence</h3>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-value" id="patterns-high">--</div>
+                    <div class="stat-desc">Confidence > 0.7</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Medium Confidence</h3>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <div class="stat-value" id="patterns-medium">--</div>
+                    <div class="stat-desc">Confidence 0.5 - 0.7</div>
+                </div>
+            </div>
+
+            <!-- Latest Patterns Section -->
+            <div class="section">
+                <h2>
+                    <i class="fas fa-list"></i> Latest Detected Patterns
+                </h2>
+                <div class="controls">
+                    <button id="refresh-patterns-btn" class="btn btn-primary">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </div>
+
+                <!-- Patterns List -->
+                <div id="patterns-list" class="patterns-list">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading patterns...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pattern Types Legend -->
+            <div class="section legend">
+                <h3>Pattern Types</h3>
+                <div class="pattern-types">
+                    <div class="pattern-type">
+                        <h4>Breakout</h4>
+                        <p>Stock mentions increasing significantly with positive sentiment</p>
+                    </div>
+                    <div class="pattern-type">
+                        <h4>Reversal</h4>
+                        <p>Sentiment shifting from negative to positive or vice versa</p>
+                    </div>
+                    <div class="pattern-type">
+                        <h4>Consolidation</h4>
+                        <p>Stable mention volume with consistent sentiment</p>
+                    </div>
+                    <div class="pattern-type">
+                        <h4>Momentum</h4>
+                        <p>Increasing mentions with sustained positive sentiment</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/patterns.js') }}"></script>
+</body>
+</html>

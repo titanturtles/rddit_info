@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stocks - Trading Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="navbar-content">
+                <h1 class="navbar-title">
+                    <i class="fas fa-chart-line"></i> Trading Bot Dashboard
+                </h1>
+                <div class="nav-links">
+                    <a href="/" class="nav-link">Dashboard</a>
+                    <a href="/stocks" class="nav-link active">Stocks</a>
+                    <a href="/patterns" class="nav-link">Patterns</a>
+                    <a href="/llm-monitor" class="nav-link">LLM Monitor</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <!-- Sentiment Summary -->
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <div class="stat-header">
+                        <h3>Bullish</h3>
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="stat-value" id="bullish-count">--</div>
+                    <div class="stat-desc">Bullish sentiments</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Neutral</h3>
+                        <i class="fas fa-minus"></i>
+                    </div>
+                    <div class="stat-value" id="neutral-count">--</div>
+                    <div class="stat-desc">Neutral sentiments</div>
+                </div>
+
+                <div class="stat-card error">
+                    <div class="stat-header">
+                        <h3>Bearish</h3>
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="stat-value" id="bearish-count">--</div>
+                    <div class="stat-desc">Bearish sentiments</div>
+                </div>
+            </div>
+
+            <!-- Sentiment Distribution Chart -->
+            <div class="section">
+                <h2>
+                    <i class="fas fa-chart-bar"></i> Sentiment Distribution
+                </h2>
+                <div style="position: relative; height: 350px; width: 100%;">
+                    <canvas id="sentimentDistributionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Stocks Table -->
+            <div class="section">
+                <h2>
+                    <i class="fas fa-star"></i> Top Mentioned Stocks
+                </h2>
+                <div class="controls">
+                    <div class="filter-group">
+                        <label for="limit-select">Show:</label>
+                        <select id="limit-select" class="select-input">
+                            <option value="5">Top 5</option>
+                            <option value="10" selected>Top 10</option>
+                            <option value="20">Top 20</option>
+                            <option value="50">Top 50</option>
+                        </select>
+                    </div>
+                    <button id="refresh-stocks-btn" class="btn btn-primary">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table stocks-table">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Mentions</th>
+                                <th>Bullish %</th>
+                                <th>Bullish</th>
+                                <th>Bearish</th>
+                                <th>Neutral</th>
+                                <th>Avg Sentiment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stocks-tbody">
+                            <tr>
+                                <td colspan="7" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sentiment Indicators Legend -->
+            <div class="section legend">
+                <h3>Legend</h3>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="legend-color bullish"></span>
+                        <span>Bullish - Positive sentiment, buy signals</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color neutral"></span>
+                        <span>Neutral - No clear direction</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color bearish"></span>
+                        <span>Bearish - Negative sentiment, sell signals</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/stocks.js') }}"></script>
+</body>
+</html>

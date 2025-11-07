@@ -199,7 +199,7 @@ class RedditTradingBot:
         if not symbols:
             # Get symbols from sentiment analysis
             sentiment_col = self.db.collections.get('sentiment_analysis')
-            symbols = sentiment_col.distinct('stock_symbol') if sentiment_col else []
+            symbols = sentiment_col.distinct('stock_symbol') if sentiment_col is not None else []
 
         logger.info(f"Fetching stock data for {len(symbols)} symbols")
 
@@ -232,7 +232,7 @@ class RedditTradingBot:
         """
         if not symbols:
             sentiment_col = self.db.collections.get('sentiment_analysis')
-            symbols = sentiment_col.distinct('stock_symbol') if sentiment_col else []
+            symbols = sentiment_col.distinct('stock_symbol') if sentiment_col is not None else []
 
         logger.info(f"Analyzing patterns for {len(symbols)} symbols")
 

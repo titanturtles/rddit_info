@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Monitor - Trading Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="navbar-content">
+                <h1 class="navbar-title">
+                    <i class="fas fa-chart-line"></i> Trading Bot Dashboard
+                </h1>
+                <div class="nav-links">
+                    <a href="/" class="nav-link">Dashboard</a>
+                    <a href="/stocks" class="nav-link">Stocks</a>
+                    <a href="/patterns" class="nav-link">Patterns</a>
+                    <a href="/llm-monitor" class="nav-link active">LLM Monitor</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <!-- LLM Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Total Calls</h3>
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="stat-value" id="llm-total-calls">--</div>
+                    <div class="stat-desc">API requests made</div>
+                </div>
+
+                <div class="stat-card success">
+                    <div class="stat-header">
+                        <h3>Successful</h3>
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-value" id="llm-success">--</div>
+                    <div class="stat-desc">Completed successfully</div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-header">
+                        <h3>Errors</h3>
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-value" id="llm-errors">--</div>
+                    <div class="stat-desc">API errors</div>
+                </div>
+
+                <div class="stat-card error">
+                    <div class="stat-header">
+                        <h3>Exceptions</h3>
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-value" id="llm-exceptions">--</div>
+                    <div class="stat-desc">System exceptions</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Success Rate</h3>
+                        <i class="fas fa-percent"></i>
+                    </div>
+                    <div class="stat-value" id="llm-success-rate">--%</div>
+                    <div class="stat-desc">Call success percentage</div>
+                </div>
+            </div>
+
+            <!-- LLM Status Chart -->
+            <div class="section">
+                <h2>
+                    <i class="fas fa-chart-pie"></i> Call Status Distribution
+                </h2>
+                <div style="position: relative; height: 300px; width: 100%; max-width: 500px;">
+                    <canvas id="llmStatusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent LLM Calls -->
+            <div class="section">
+                <h2>
+                    <i class="fas fa-list"></i> Recent LLM Calls
+                </h2>
+                <div class="controls">
+                    <button id="refresh-btn" class="btn btn-primary">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                    <span id="auto-refresh-status">Auto-refresh: ON</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Model</th>
+                                <th>Status</th>
+                                <th>Prompt Length</th>
+                                <th>Response Length</th>
+                                <th>Error</th>
+                            </tr>
+                        </thead>
+                        <tbody id="llm-calls-tbody">
+                            <tr>
+                                <td colspan="6" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Error Details -->
+            <div class="section" id="errors-section" style="display: none;">
+                <h2>
+                    <i class="fas fa-bug"></i> Recent Errors
+                </h2>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Type</th>
+                                <th>Error Message</th>
+                                <th>Prompt Preview</th>
+                            </tr>
+                        </thead>
+                        <tbody id="errors-tbody">
+                            <tr>
+                                <td colspan="4" class="text-center">No errors found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/llm_monitor.js') }}"></script>
+</body>
+</html>

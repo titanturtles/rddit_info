@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reddit Trading Bot - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="navbar-content">
+                <h1 class="navbar-title">
+                    <i class="fas fa-chart-line"></i> Trading Bot Dashboard
+                </h1>
+                <div class="nav-links">
+                    <a href="/" class="nav-link active">Dashboard</a>
+                    <a href="/stocks" class="nav-link">Stocks</a>
+                    <a href="/patterns" class="nav-link">Patterns</a>
+                    <a href="/llm-monitor" class="nav-link">LLM Monitor</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-label">Status:</span>
+                    <span class="status-value" id="health-status">
+                        <i class="fas fa-spinner fa-spin"></i> Loading...
+                    </span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Last Updated:</span>
+                    <span class="status-value" id="last-updated">--:--</span>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Reddit Posts</h3>
+                        <i class="fas fa-reddit"></i>
+                    </div>
+                    <div class="stat-value" id="posts-count">--</div>
+                    <div class="stat-desc">Total posts analyzed</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Comments</h3>
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="stat-value" id="comments-count">--</div>
+                    <div class="stat-desc">Total comments analyzed</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Sentiments</h3>
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="stat-value" id="sentiments-count">--</div>
+                    <div class="stat-desc">Sentiment analyses performed</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Stocks</h3>
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div class="stat-value" id="stocks-count">--</div>
+                    <div class="stat-desc">Unique stocks mentioned</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>LLM Calls</h3>
+                        <i class="fas fa-cpu"></i>
+                    </div>
+                    <div class="stat-value" id="llm-calls">--</div>
+                    <div class="stat-desc">Total API calls made</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Patterns</h3>
+                        <i class="fas fa-wave-square"></i>
+                    </div>
+                    <div class="stat-value" id="patterns-count">--</div>
+                    <div class="stat-desc">Trading patterns detected</div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-container">
+                    <h3>Sentiment Distribution</h3>
+                    <div style="position: relative; height: 300px; width: 100%;">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Data Collection Timeline</h3>
+                    <div style="position: relative; height: 300px; width: 100%;">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Stocks Section -->
+            <div class="section">
+                <h2>
+                    <i class="fas fa-star"></i> Top Mentioned Stocks
+                </h2>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Mentions</th>
+                                <th>Bullish %</th>
+                                <th>Bearish</th>
+                                <th>Neutral</th>
+                                <th>Avg Sentiment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="top-stocks-tbody">
+                            <tr>
+                                <td colspan="6" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="section">
+                <h2>
+                    <i class="fas fa-clock"></i> Recent LLM Calls
+                </h2>
+                <div class="activity-list" id="activity-list">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
