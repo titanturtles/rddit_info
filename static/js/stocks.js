@@ -5,12 +5,12 @@
 console.log('[Stocks] Loading...');
 
 // Get utilities from common.js
-let fetchAPI, createChart, setElementText;
+let dFetchAPI, dCreateChart, dSetElementText;
 
 if (typeof window.dashboardUtils !== 'undefined') {
-    fetchAPI = window.dashboardUtils.fetchAPI;
-    createChart = window.dashboardUtils.createChart;
-    setElementText = window.dashboardUtils.setElementText;
+    dFetchAPI = window.dashboardUtils.fetchAPI;
+    dCreateChart = window.dashboardUtils.createChart;
+    dSetElementText = window.dashboardUtils.setElementText;
     console.log('[Stocks] Utilities loaded successfully');
 } else {
     console.error('[Stocks] ERROR: window.dashboardUtils not available');
@@ -52,11 +52,11 @@ function getCurrentLimit() {
 // ============================================================================
 
 async function loadSentimentSummary() {
-    const data = await fetchAPI('/sentiment/summary');
+    const data = await dFetchAPI('/sentiment/summary');
     if (data) {
-        setElementText('bullish-count', data.bullish);
-        setElementText('neutral-count', data.neutral);
-        setElementText('bearish-count', data.bearish);
+        dSetElementText('bullish-count', data.bullish);
+        dSetElementText('neutral-count', data.neutral);
+        dSetElementText('bearish-count', data.bearish);
 
         // Create distribution chart
         const total = data.bullish + data.neutral + data.bearish;
@@ -93,7 +93,7 @@ async function loadSentimentSummary() {
             }
         };
 
-        window.dashboardUtils.createChart('sentimentDistributionChart', chartConfig);
+        window.dashboardUtils.dCreateChart('sentimentDistributionChart', chartConfig);
     }
 }
 
@@ -102,7 +102,7 @@ async function loadSentimentSummary() {
 // ============================================================================
 
 async function loadTopStocks(limit = 10) {
-    const data = await fetchAPI(`/stocks/top?limit=${limit}`);
+    const data = await dFetchAPI(`/stocks/top?limit=${limit}`);
     if (data && data.stocks) {
         const tbody = document.getElementById('stocks-tbody');
         if (!tbody) return;

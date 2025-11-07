@@ -11,11 +11,87 @@ from database import MongoDBConnection
 from llm_processor import LLMProcessor
 from config_loader import get_config
 import json
+import sys
+
+# ============================================================================
+# LOGGING CONFIGURATION
+# ============================================================================
+
+# Configure logging to show in console with detailed format
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler('dashboard.log')
+    ]
+)
 
 logger = logging.getLogger(__name__)
+logger.info("=" * 80)
+logger.info("Reddit Trading Bot Web Dashboard Starting")
+logger.info("=" * 80)
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
+
+# ============================================================================
+# HTTP REQUEST/RESPONSE LOGGING
+# ============================================================================
+
+@app.before_request
+def log_request():
+    """Log all incoming HTTP requests"""
+    logger.info(f"\n{'='*80}")
+    logger.info(f"[REQUEST] {request.method} {request.path}")
+    logger.info(f"[URL] {request.url}")
+    logger.info(f"[CLIENT] {request.remote_addr}")
+    logger.info(f"[HEADERS] {dict(request.headers)}")
+    if request.method in ['POST', 'PUT', 'PATCH']:
+        logger.info(f"[BODY] {request.get_data(as_text=True)}")
+    logger.info(f"{'='*80}")
+
+@app.after_request
+def log_response(response):
+    """Log all outgoing HTTP responses"""
+    logger.info(f"\n{'='*80}")
+    logger.info(f"[RESPONSE] {request.method} {request.path}")
+    logger.info(f"[STATUS] {response.status_code} {response.status}")
+    logger.info(f"[CONTENT-TYPE] {response.content_type}")
+    logger.info(f"[CONTENT-LENGTH] {response.content_length} bytes")
+
+    # Log response data for JSON responses
+    if response.content_type and 'json' in response.content_type:
+        try:
+            data = json.loads(response.get_data(as_text=True))
+            logger.info(f"[DATA] {json.dumps(data, indent=2)[:500]}...")  # First 500 chars
+        except Exception as e:
+            logger.warning(f"[DATA] Could not parse JSON response: {e}")
+
+    logger.info(f"{'='*80}\n")
+    return response
+
+@app.errorhandler(Exception)
+def handle_error(error):
+    """Log all errors"""
+    logger.error(f"\n{'='*80}")
+    logger.error(f"[ERROR] Exception occurred")
+    logger.error(f"[TYPE] {type(error).__name__}")
+    logger.error(f"[MESSAGE] {str(error)}")
+    logger.error(f"[PATH] {request.path}")
+    logger.error(f"[METHOD] {request.method}")
+
+    import traceback
+    logger.error(f"[TRACEBACK]\n{traceback.format_exc()}")
+    logger.error(f"{'='*80}\n")
+
+    # Return error response
+    return jsonify({
+        'error': str(error),
+        'type': type(error).__name__,
+        'path': request.path,
+        'method': request.method
+    }), 500
 
 # Initialize database connection
 try:

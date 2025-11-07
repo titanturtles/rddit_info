@@ -70,8 +70,13 @@ class RedditFetcher:
             reddit_config = self.config.get_section('reddit')
             limit = limit or reddit_config.get('limit_per_request', 100)
 
+            logger.info("=" * 80)
+            logger.info(f"[REDDIT REQUEST] Fetching posts from r/{subreddit_name}")
+            logger.info(f"[PARAMS] time_filter={time_filter}, limit={limit}")
+            logger.info("=" * 80)
+
             subreddit = self.reddit.subreddit(subreddit_name)
-            logger.info(f"Fetching posts from r/{subreddit_name} (limit: {limit})")
+            logger.debug(f"Subreddit object created: {subreddit.display_name}")
 
             for post in subreddit.top(time_filter=time_filter, limit=limit):
                 try:
@@ -94,17 +99,24 @@ class RedditFetcher:
                         'upvote_ratio': post.upvote_ratio
                     }
 
+                    logger.debug(f"[REDDIT POST] ID={post.id}, Title={post.title[:50]}..., Score={post.score}, Comments={post.num_comments}")
                     posts.append(post_data)
 
                 except Exception as e:
-                    logger.warning(f"Error processing post {post.id}: {e}")
+                    logger.warning(f"[REDDIT ERROR] Error processing post {post.id}: {e}")
                     continue
 
-            logger.info(f"Successfully fetched {len(posts)} posts from r/{subreddit_name}")
+            logger.info("=" * 80)
+            logger.info(f"[REDDIT RESPONSE] Successfully fetched {len(posts)} posts from r/{subreddit_name}")
+            logger.info(f"[STATS] Total posts: {len(posts)}, First post: {posts[0]['title'][:50] if posts else 'N/A'}...")
+            logger.info("=" * 80)
             return posts
 
         except PRAWException as e:
-            logger.error(f"Reddit API error while fetching posts: {e}")
+            logger.error("=" * 80)
+            logger.error(f"[REDDIT ERROR] API error while fetching posts: {e}")
+            logger.error(f"[RESPONSE] Failed to fetch from r/{subreddit_name}, returning {len(posts)} posts")
+            logger.error("=" * 80)
             return posts
 
     def fetch_comments(self, subreddit_name: str, post_id: Optional[str] = None,

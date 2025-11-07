@@ -49,32 +49,46 @@ class StockDataFetcher:
 
         for attempt in range(max_retries):
             try:
-                logger.info(f"Fetching {symbol} data from {start_date.date()} to {end_date.date()} (attempt {attempt+1}/{max_retries})")
+                logger.info("=" * 80)
+                logger.info(f"[YFINANCE REQUEST] Fetching {symbol.upper()} price data")
+                logger.info(f"[PARAMS] start_date={start_date.date()}, end_date={end_date.date()}, interval=1h")
+                logger.info(f"[ATTEMPT] {attempt+1}/{max_retries}")
+                logger.info("=" * 80)
 
                 ticker = yf.Ticker(symbol.upper())
+                logger.debug(f"[YFINANCE] Ticker object created for {symbol.upper()}")
+
                 df = ticker.history(start=start_date.date(), end=end_date.date(), repair=True, interval="1h")
+                logger.debug(f"[YFINANCE] History retrieved from Yahoo Finance API")
 
                 if df is None or df.empty:
-                    logger.warning(f"No data found for {symbol}")
+                    logger.warning(f"[YFINANCE] No data found for {symbol}")
                     if attempt < max_retries - 1:
                         wait_time = 2 ** attempt  # Exponential backoff
-                        logger.info(f"Retrying in {wait_time} seconds...")
+                        logger.info(f"[RETRY] Retrying in {wait_time} seconds...")
                         time.sleep(wait_time)
                         continue
                     return None
 
-                logger.info(f"Retrieved {len(df)} records for {symbol}")
+                logger.info("=" * 80)
+                logger.info(f"[YFINANCE RESPONSE] Retrieved {len(df)} records for {symbol.upper()}")
+                logger.info(f"[DATA] Date range: {df.index.min().date()} to {df.index.max().date()}")
+                logger.info(f"[COLUMNS] {list(df.columns)}")
+                logger.info(f"[SAMPLE] Latest: Close=${df['Close'].iloc[-1]:.2f}, Volume={df['Volume'].iloc[-1]:,.0f}")
+                logger.info("=" * 80)
                 return df
 
             except Exception as e:
-                logger.warning(f"Error fetching data for {symbol} (attempt {attempt+1}/{max_retries}): {e}")
+                logger.warning("=" * 80)
+                logger.warning(f"[YFINANCE ERROR] Error fetching data for {symbol.upper()} (attempt {attempt+1}/{max_retries}): {e}")
+                logger.warning("=" * 80)
 
                 if attempt < max_retries - 1:
                     wait_time = 2 ** attempt  # Exponential backoff
-                    logger.info(f"Retrying in {wait_time} seconds...")
+                    logger.info(f"[RETRY] Retrying in {wait_time} seconds...")
                     time.sleep(wait_time)
                 else:
-                    logger.error(f"Failed to fetch {symbol} after {max_retries} attempts")
+                    logger.error(f"[YFINANCE ERROR] Failed to fetch {symbol.upper()} after {max_retries} attempts")
                     return None
 
         return None

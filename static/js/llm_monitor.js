@@ -5,12 +5,12 @@
 console.log('[LLM Monitor] Loading...');
 
 // Get utilities from common.js
-let fetchAPI, createChart, setElementText;
+let dFetchAPI, dCreateChart, dSetElementText;
 
 if (typeof window.dashboardUtils !== 'undefined') {
-    fetchAPI = window.dashboardUtils.fetchAPI;
-    createChart = window.dashboardUtils.createChart;
-    setElementText = window.dashboardUtils.setElementText;
+    dFetchAPI = window.dashboardUtils.fetchAPI;
+    dCreateChart = window.dashboardUtils.createChart;
+    dSetElementText = window.dashboardUtils.setElementText;
     console.log('[LLM Monitor] Utilities loaded successfully');
 } else {
     console.error('[LLM Monitor] ERROR: window.dashboardUtils not available');
@@ -49,12 +49,12 @@ async function initLLMMonitor() {
 // ============================================================================
 
 async function loadLLMStats() {
-    const data = await fetchAPI('/llm/stats');
+    const data = await dFetchAPI('/llm/stats');
     if (data) {
-        setElementText('llm-total-calls', data.total_calls);
-        setElementText('llm-success', data.success);
-        setElementText('llm-errors', data.errors);
-        setElementText('llm-exceptions', data.exceptions);
+        dSetElementText('llm-total-calls', data.total_calls);
+        dSetElementText('llm-success', data.success);
+        dSetElementText('llm-errors', data.errors);
+        dSetElementText('llm-exceptions', data.exceptions);
 
         const successRateElement = document.getElementById('llm-success-rate');
         if (successRateElement) {
@@ -88,7 +88,7 @@ async function loadLLMStats() {
             }
         };
 
-        window.dashboardUtils.createChart('llmStatusChart', chartConfig);
+        window.dashboardUtils.dCreateChart('llmStatusChart', chartConfig);
     }
 }
 
@@ -97,7 +97,7 @@ async function loadLLMStats() {
 // ============================================================================
 
 async function loadRecentLLMCalls() {
-    const data = await fetchAPI('/llm/recent?limit=20');
+    const data = await dFetchAPI('/llm/recent?limit=20');
     if (data && data.calls) {
         const tbody = document.getElementById('llm-calls-tbody');
         if (!tbody) return;
@@ -145,7 +145,7 @@ async function loadRecentLLMCalls() {
 // ============================================================================
 
 async function loadLLMErrors() {
-    const data = await fetchAPI('/llm/errors');
+    const data = await dFetchAPI('/llm/errors');
     if (data && data.errors) {
         const tbody = document.getElementById('errors-tbody');
         const section = document.getElementById('errors-section');

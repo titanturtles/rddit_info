@@ -5,11 +5,11 @@
 console.log('[Patterns] Loading...');
 
 // Get utilities from common.js
-let fetchAPI, setElementText;
+let dFetchAPI, dSetElementText;
 
 if (typeof window.dashboardUtils !== 'undefined') {
-    fetchAPI = window.dashboardUtils.fetchAPI;
-    setElementText = window.dashboardUtils.setElementText;
+    dFetchAPI = window.dashboardUtils.fetchAPI;
+    dSetElementText = window.dashboardUtils.setElementText;
     console.log('[Patterns] Utilities loaded successfully');
 } else {
     console.error('[Patterns] ERROR: window.dashboardUtils not available');
@@ -34,7 +34,7 @@ async function initPatterns() {
 // ============================================================================
 
 async function loadPatterns() {
-    const data = await fetchAPI('/patterns/latest?limit=20');
+    const data = await dFetchAPI('/patterns/latest?limit=20');
     if (data && data.patterns) {
         const container = document.getElementById('patterns-list');
         if (!container) return;
@@ -59,9 +59,9 @@ async function loadPatterns() {
             else if (conf > 0.5) mediumConfidence++;
         });
 
-        setElementText('patterns-total', totalPatterns);
-        setElementText('patterns-high', highConfidence);
-        setElementText('patterns-medium', mediumConfidence);
+        dSetElementText('patterns-total', totalPatterns);
+        dSetElementText('patterns-high', highConfidence);
+        dSetElementText('patterns-medium', mediumConfidence);
 
         // Display patterns
         data.patterns.forEach(pattern => {

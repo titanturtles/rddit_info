@@ -26,6 +26,12 @@ class LLMProcessor:
         'DISH', 'NKLA', 'WISH', 'CLNE', 'TLRY', 'SNDL', 'MSTR', 'CORZ'
     }
 
+    FAKE_SYMBOLS = {
+        'THE', 'AND', 'FOR', 'ARE', 'YOU', 'THIS', 'THAT', 'IS', 'WITH', 'ON', 'AT', 'BY',
+        'FROM', 'OF', 'IN', 'TO', 'AS', 'IT', 'BE', 'AN', 'OR', 'IF', 'BUT', 'NOT', 'ALL',
+        'I', 'S', 'A', 'P', 'CEO', 'CFO', 'IPO', 'ETF', 'SEC', 'FDA', 'IRS', 'U', 'AI'
+    }
+
     def __init__(self):
         """Initialize LLM processor"""
         self.config = get_config()
@@ -56,6 +62,14 @@ class LLMProcessor:
             LLM response or None if error
         """
         try:
+            logger.info("=" * 80)
+            logger.info(f"[DEEPSEEK REQUEST] Calling {self.model}")
+            logger.info(f"[ENDPOINT] {self.base_url}/chat/completions")
+            logger.info(f"[PARAMS] temperature={self.temperature}, max_tokens={self.max_tokens}, timeout={self.timeout}s")
+            logger.info(f"[PROMPT] {prompt[:100]}..." if len(prompt) > 100 else f"[PROMPT] {prompt}")
+            logger.info(f"[PROMPT_LENGTH] {len(prompt)} characters")
+            logger.info("=" * 80)
+
             headers = {
                 'Authorization': f'Bearer {self.api_key}',
                 'Content-Type': 'application/json'
@@ -71,6 +85,9 @@ class LLMProcessor:
                 'max_tokens': self.max_tokens
             }
 
+            logger.debug(f"[DEEPSEEK] Request payload: {payload}")
+            logger.debug(f"[DEEPSEEK] Headers (masked): Authorization=Bearer ***{self.api_key[-10:]}, Content-Type=application/json")
+
             with httpx.Client(timeout=self.timeout) as client:
                 response = client.post(
                     f'{self.base_url}/chat/completions',
@@ -78,9 +95,21 @@ class LLMProcessor:
                     json=payload
                 )
 
+                logger.debug(f"[DEEPSEEK] Response status: {response.status_code}")
+                logger.debug(f"[DEEPSEEK] Response headers: {dict(response.headers)}")
+
                 if response.status_code == 200:
                     result = response.json()
                     response_text = result['choices'][0]['message']['content']
+
+                    logger.info("=" * 80)
+                    logger.info(f"[DEEPSEEK RESPONSE] Status: 200 OK")
+                    logger.info(f"[MODEL] {result.get('model', 'unknown')}")
+                    logger.info(f"[TOKENS_USED] Prompt: {result['usage']['prompt_tokens']}, Completion: {result['usage']['completion_tokens']}, Total: {result['usage']['total_tokens']}")
+                    logger.info(f"[FINISH_REASON] {result['choices'][0].get('finish_reason', 'unknown')}")
+                    logger.info(f"[RESPONSE] {response_text[:150]}..." if len(response_text) > 150 else f"[RESPONSE] {response_text}")
+                    logger.info(f"[RESPONSE_LENGTH] {len(response_text)} characters")
+                    logger.info("=" * 80)
 
                     # Store raw LLM response to database
                     self._store_llm_response(prompt, response_text, result, status='success')
@@ -88,7 +117,12 @@ class LLMProcessor:
                     return response_text
                 else:
                     error_msg = f"Status {response.status_code}: {response.text}"
-                    logger.error(f"LLM API error: {error_msg}")
+                    logger.error("=" * 80)
+                    logger.error(f"[DEEPSEEK ERROR] API request failed")
+                    logger.error(f"[STATUS] {response.status_code}")
+                    logger.error(f"[ERROR] {error_msg}")
+                    logger.error(f"[RESPONSE_TEXT] {response.text[:200]}")
+                    logger.error("=" * 80)
 
                     # Store error response to database
                     self._store_llm_response(prompt, None, response.text, status='error', error=error_msg)
@@ -96,7 +130,13 @@ class LLMProcessor:
                     return None
 
         except Exception as e:
-            logger.error(f"Error calling LLM: {e}")
+            import traceback
+            logger.error("=" * 80)
+            logger.error(f"[DEEPSEEK EXCEPTION] Error calling LLM")
+            logger.error(f"[EXCEPTION_TYPE] {type(e).__name__}")
+            logger.error(f"[EXCEPTION_MSG] {str(e)}")
+            logger.error(f"[TRACEBACK]\n{traceback.format_exc()}")
+            logger.error("=" * 80)
 
             # Store exception to database
             self._store_llm_response(prompt, None, None, status='exception', error=str(e))
@@ -179,7 +219,7 @@ class LLMProcessor:
             if ticker in self.COMMON_SYMBOLS:
                 symbols.add(ticker)
             # Add common market related terms that look like symbols
-            elif len(ticker) <= 5 and ticker not in ['THE', 'AND', 'FOR', 'ARE', 'YOU', 'THIS', 'THAT']:
+            elif len(ticker) <= 5 and ticker not in FAKE_SYMBOLS:
                 symbols.add(ticker)
 
         # Try LLM extraction for complex cases
